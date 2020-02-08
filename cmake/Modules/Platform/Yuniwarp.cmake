@@ -3,10 +3,10 @@
 #  WARPSDK_WASM2C
 #  WARPSDK_CLANG
 #  WARPSDK_LINKER
-include(${CMAKE_CURRENT_LIST_DIR}/../../protopaths.cmake)
+#include(${CMAKE_CURRENT_LIST_DIR}/../../protopaths.cmake)
 
-get_filename_component(WARPSDK_ROOT ${CMAKE_CURRENT_LIST_DIR}/../../../sysroot ABSOLUTE)
-set(WARPSDK_SYSROOT "${WARPSDK_ROOT}/sysroot")
+#get_filename_component(WARPSDK_ROOT ${CMAKE_CURRENT_LIST_DIR}/../../.. ABSOLUTE)
+#set(WARPSDK_SYSROOT "${WARPSDK_ROOT}/sysroot")
 
 list(APPEND CMAKE_MODULE_PATH "${WARPSDK_ROOT}/cmake/Modules")
 
@@ -42,11 +42,15 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 set(WARP32_TARGET_TRIPLE "wasm32")
 set(WARP32_THREAD_MODEL "") # Enable Pthread defines
 set(WARP32_CFLAGS_WAR "")
-set(WARP32_CFLAGS "${WARP32_CFLAGS_WAR} --target=${WARP32_TARGET_TRIPLE}")
+
+# FIXME: We still need to provide memcpy memmove memset memcmp REF: https://gcc.gnu.org/onlinedocs/gcc/Standards.html
+set(WARP32_CFLAGS "${WARP32_CFLAGS_WAR} --target=${WARP32_TARGET_TRIPLE} --sysroot=${WARPSDK_SYSROOT} -ffreestanding")
 set(WARP32_DEFS "-D__WARP32LE__ -D__WARP32__ -D__WARP__")
 # FIXME: Per-symbol exports might be prefered -- needs .def though
 #        --Wl,--export=SYMBOL
-set(WARP32_LDFLAGS "-nostdlib -Wl,--no-entry -Wl,--export-dynamic")
+#set(WARP32_LDFLAGS "-nostdlib -Wl,--no-entry -Wl,--export-dynamic -Wl,--allow-undefined-file=${WARPSDK_SYSROOT}/sysroot.syms")
+set(WARP32_LDFLAGS "-nostdlib -Wl,--no-entry -Wl,--export-dynamic -Wl,--allow-undefined")
+#set(WARP32_LDFLAGS "-nostdlib -Wl,--no-entry") ## For newer LLVM
 
 # Configure compiler templates
 
@@ -67,6 +71,5 @@ foreach(lang C CXX)
         "<CMAKE_${lang}_COMPILER> ${WARP32_LDFLAGS} ${WARP32_CFLAGS} <LINK_FLAGS> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
     # Executables are same for shared libraries
     set(CMAKE_${lang}_LINK_EXECUTABLE
-        "<CMAKE_${lang}_COMPILER> ${WARP32_LDFLAGS} ${WARP32_CFLAGS} <LINK_FLAGS> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+        "<CMAKE_${lang}_COMPILER> -v ${WARP32_LDFLAGS} ${WARP32_CFLAGS} <LINK_FLAGS> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
 endforeach()
-
