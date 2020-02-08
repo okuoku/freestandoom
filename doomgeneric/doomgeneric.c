@@ -1,5 +1,7 @@
 #include "doomgeneric.h"
 
+#include <stdlib.h>
+
 uint32_t* DG_ScreenBuffer = 0;
 
 
