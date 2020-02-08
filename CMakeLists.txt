@@ -25,4 +25,5 @@ endforeach()
 
 add_executable(freestandoom
     module.c
+    tlsf/tlsf.c
     ${doomgeneric_srcs})
