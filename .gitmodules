@@ -9,4 +9,4 @@
 	url = https://github.com/nothings/stb
 [submodule "wabt"]
 	path = wabt
-	url = https://github.com/WebAssembly/wabt
+	url = https://github.com/okuoku/wabt
