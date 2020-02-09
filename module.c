@@ -4,8 +4,9 @@ void D_DoomMain();
 
 #include <stdio.h>
 int errno;
-FILE* proxylibc_stderr = NULL;
-FILE* proxylibc_stdout = NULL;
+
+// in stdio_iopkt.c
+void stdio_init(void);
 
 // in heap.c
 void heap_init(void);

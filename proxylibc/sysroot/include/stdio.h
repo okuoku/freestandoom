@@ -41,7 +41,7 @@ extern FILE* stdout;
 int remove(const char *filename);
 
 #define rename proxylibc_rename
-int rename(const char *old, const char *new);
+int rename(const char *old, const char *newname); // new is C++ reserved
 
 // tmpfile
 // tmpnam

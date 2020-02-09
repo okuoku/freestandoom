@@ -38,4 +38,6 @@ add_executable(freestandoom
     target/prf.c
     target/prf_stb.c
     target/dummy_sscanf.c
+    iopkt/target/posix_iopkt.c
+    iopkt/target/stdio_iopkt.c
     ${doomgeneric_srcs})
