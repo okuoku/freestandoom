@@ -16,7 +16,8 @@ typedef uint64_t fpos_t;
 // _IOLBF
 // _IONBF
 // BUFSIZ
-// EOF
+#define EOF proxylibc_EOF
+#define proxylibc_EOF -1
 
 // FOPEN_MAX
 // FILENAME_MAX
@@ -87,7 +88,8 @@ int vfprintf(FILE * restrict stream, const char * restrict format, va_list arg);
 #define vsnprintf proxylibc_vsnprintf
 int vsnprintf(char * restrict s, size_t n, const char * restrict format, va_list arg);
 // vsprintf
-// vsscanf
+#define vsscanf proxylibc_vsscanf
+int vsscanf(const char * restrict s, const char * restrict format, va_list arg);
 
 // fgetc
 // fgets

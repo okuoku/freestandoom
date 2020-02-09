@@ -32,6 +32,8 @@ add_executable(freestandoom
     target/strdup.c
     target/ascii_ctype.c
     target/ascii_atoi.c
+    target/ascii_string.c
     target/ascii_strings.c
     target/abs.c
+    target/prf.c
     ${doomgeneric_srcs})

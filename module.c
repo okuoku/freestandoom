@@ -5,6 +5,7 @@ void D_DoomMain();
 #include <stdio.h>
 int errno;
 FILE* proxylibc_stderr = NULL;
+FILE* proxylibc_stdout = NULL;
 
 // in heap.c
 void heap_init(void);
