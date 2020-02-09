@@ -36,4 +36,6 @@ add_executable(freestandoom
     target/ascii_strings.c
     target/abs.c
     target/prf.c
+    target/prf_stb.c
+    target/dummy_sscanf.c
     ${doomgeneric_srcs})
