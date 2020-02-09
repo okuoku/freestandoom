@@ -48,6 +48,14 @@ puts(const char* s){
 }
 
 int
+putchar(int c){
+    char buf[2];
+    buf[0] = c;
+    buf[1] = 0;
+    return puts(buf);
+}
+
+int
 sscanf(const char* s, const char* format, ...){
     int r;
     va_list ap;
