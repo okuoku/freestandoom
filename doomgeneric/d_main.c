@@ -166,7 +166,33 @@ extern  boolean setsizeneeded;
 extern  int             showMessages;
 void R_ExecuteSetViewSize (void);
 
-void D_Display (void)
+int D_DisplayWipe (int wipestart)
+{
+    int				nowtime;
+    int				tics;
+    boolean			done;
+    nowtime = I_GetTime ();
+    tics = nowtime - wipestart;
+
+    if(tics <= 0){
+        return wipestart;
+    }
+
+    wipestart = nowtime;
+    done = wipe_ScreenWipe(wipe_Melt , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
+    I_UpdateNoBlit ();
+    M_Drawer ();                            // menu is drawn even on top of wipes
+    I_FinishUpdate ();                      // page flip or blit buffer
+
+    if(done){
+        return 0;
+    }else{
+        return wipestart;
+    }
+}
+
+// RX: Return non-zero if we need to call D_DisplayWipe for wipe
+int D_Display (void)
 {
     static  boolean		viewactivestate = false;
     static  boolean		menuactivestate = false;
@@ -174,16 +200,13 @@ void D_Display (void)
     static  boolean		fullscreen = false;
     static  gamestate_t		oldgamestate = -1;
     static  int			borderdrawcount;
-    int				nowtime;
-    int				tics;
     int				wipestart;
     int				y;
-    boolean			done;
     boolean			wipe;
     boolean			redrawsbar;
 
     if (nodrawers)
-    	return;                    // for comparative timing / profiling
+    	return 0;                    // for comparative timing / profiling
 		
     redrawsbar = false;
     
@@ -302,30 +325,14 @@ void D_Display (void)
     if (!wipe)
     {
 	I_FinishUpdate ();              // page flip or blit buffer
-	return;
+	return 0;
     }
     
     // wipe update
     wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
-
     wipestart = I_GetTime () - 1;
 
-    do
-    {
-	do
-	{
-	    nowtime = I_GetTime ();
-	    tics = nowtime - wipestart;
-            I_Sleep(1);
-	} while (tics <= 0);
-        
-	wipestart = nowtime;
-	done = wipe_ScreenWipe(wipe_Melt
-			       , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
-	I_UpdateNoBlit ();
-	M_Drawer ();                            // menu is drawn even on top of wipes
-	I_FinishUpdate ();                      // page flip or blit buffer
-    } while (!done);
+    return wipestart;
 }
 
 //
@@ -405,6 +412,29 @@ boolean D_GrabMouseCallback(void)
 //
 //  D_DoomLoop
 //
+int RX_DoomLoopStep(int state)
+{
+    int r;
+    if(state == 0){
+        // frame syncronous IO operations
+        I_StartFrame ();
+
+        TryRunTics (); // will run at least one tic
+
+        S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
+
+        // Update display, next frame, with current state.
+        if (screenvisible)
+        {
+            r = D_Display ();
+        }
+    }else{
+        r = D_DisplayWipe(r);
+    }
+
+    return r;
+}
+
 void D_DoomLoop (void)
 {
     if (bfgedition &&
@@ -439,21 +469,7 @@ void D_DoomLoop (void)
         wipegamestate = gamestate;
     }
 
-    while (1)
-    {
-		// frame syncronous IO operations
-		I_StartFrame ();
-
-		TryRunTics (); // will run at least one tic
-
-		S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
-
-		// Update display, next frame, with current state.
-		if (screenvisible)
-		{
-			D_Display ();
-		}
-    }
+    // RX: Call RX_DoomLoopStep to step internal state
 }
 
 
@@ -1812,14 +1828,16 @@ void D_DoomMain (void)
     {
 		singledemo = true;              // quit after one demo
 		G_DeferedPlayDemo (demolumpname);
-		D_DoomLoop ();  // never returns
+		// D_DoomLoop ();  // never returns
+                return;
     }
 
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
     {
 		G_TimeDemo (demolumpname);
-		D_DoomLoop ();  // never returns
+		// D_DoomLoop ();  // never returns
+                return;
     }
 
     if (startloadgame >= 0)
@@ -1836,6 +1854,7 @@ void D_DoomMain (void)
 			D_StartTitle ();                // start up intro loop
     }
 
-    D_DoomLoop ();  // never returns
+    // D_DoomLoop ();  // never returns
+    return;
 }
 
