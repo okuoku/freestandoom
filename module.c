@@ -6,11 +6,15 @@ void D_DoomMain();
 int errno;
 FILE* proxylibc_stderr = NULL;
 
+// in heap.c
+void heap_init(void);
 
 //__attribute__((export_name(main))) // For newer LLVM
 __attribute__((__visibility__("default")))
 void
 run(void) {
+    heap_init();
+
     M_FindResponseFile();
     dg_Create();
     D_DoomMain();

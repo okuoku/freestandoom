@@ -24,6 +24,8 @@ foreach(s ${doomgeneric_srcs_orig})
 endforeach()
 
 add_executable(freestandoom
+    dg.c
     module.c
     tlsf/tlsf.c
+    target/heap.c
     ${doomgeneric_srcs})
