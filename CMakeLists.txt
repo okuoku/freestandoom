@@ -28,4 +28,10 @@ add_executable(freestandoom
     module.c
     tlsf/tlsf.c
     target/heap.c
+    target/dummy_system.c
+    target/strdup.c
+    target/ascii_ctype.c
+    target/ascii_atoi.c
+    target/ascii_strings.c
+    target/abs.c
     ${doomgeneric_srcs})
