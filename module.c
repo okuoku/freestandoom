@@ -11,13 +11,31 @@ void stdio_init(void);
 // in heap.c
 void heap_init(void);
 
-//__attribute__((export_name(main))) // For newer LLVM
+// Globals
+int global_buttonbitmap;
+static int state;
+
+//__attribute__((export_name(init))) // For newer LLVM
 __attribute__((__visibility__("default")))
 void
-run(void) {
+init(void) {
     heap_init();
+    stdio_init();
+
+    state = 0;
 
     M_FindResponseFile();
     dg_Create();
     D_DoomMain();
+}
+
+
+int RX_DoomLoopStep(int state);
+
+//__attribute__((export_name(step))) // For newer LLVM
+__attribute__((__visibility__("default")))
+void
+step(int buttons){
+    global_buttonbitmap = buttons;
+    state = RX_DoomLoopStep(state);
 }

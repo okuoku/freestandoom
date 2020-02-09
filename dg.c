@@ -1,5 +1,7 @@
+#include "doomgeneric/doomgeneric/doomkeys.h"
 #include "doomgeneric/doomgeneric/doomgeneric.h"
 
+extern int global_buttonbitmap;
 static uint64_t framecount = 0;
 
 void
