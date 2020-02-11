@@ -56,10 +56,16 @@ set(WARP32_LDFLAGS "-nostdlib -Wl,--no-entry -Wl,--export-dynamic -Wl,--allow-un
 
 set(CMAKE_AR "${WARPSDK_AR}")
 foreach(lang C CXX)
+    string(APPEND CMAKE_${lang}_FLAGS_INIT " ")
+    string(APPEND CMAKE_${lang}_FLAGS_DEBUG_INIT " -g") # ??
+    string(APPEND CMAKE_${lang}_FLAGS_MINSIZEREL_INIT " -Os -DNDEBUG")
+    string(APPEND CMAKE_${lang}_FLAGS_RELEASE_INIT " -O3 -DNDEBUG")
+    string(APPEND CMAKE_${lang}_FLAGS_RELWITHDEBINFO_INIT " -O2 -g -DNDEBUG")
     set(CMAKE_${lang}_COMPILER "${WARPSDK_CLANG}")
 
     # Object
     set(CMAKE_${lang}_COMPILE_OBJECT "<CMAKE_${lang}_COMPILER> ${WARP32_CFLAGS} ${WARP32_DEFS} <DEFINES> <INCLUDES> <FLAGS> -o <OBJECT> -c <SOURCE>")
+    set(CMAKE_DEPFILE_FLAGS_${lang} "-MD -MT <OBJECT> -MF <DEPFILE>")
 
     # File
     set(CMAKE_${lang}_CREATE_STATIC_LIBRARY "<CMAKE_AR> rc <TARGET> <LINK_FLAGS> <OBJECTS>")
