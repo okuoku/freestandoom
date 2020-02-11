@@ -258,8 +258,6 @@ host_load(const char* path){
         wasm_func_as_extern(func_cb_exit),
         /* iopkt_req32 */
         wasm_func_as_extern(func_cb_iopkt_req32),
-        /* proxylibc_memmove */
-        wasm_func_as_extern(func_cb_memmove),
         /* memcpy */
         wasm_func_as_extern(func_cb_memcpy)
     };
