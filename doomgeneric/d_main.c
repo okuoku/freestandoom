@@ -1854,7 +1854,7 @@ void D_DoomMain (void)
 			D_StartTitle ();                // start up intro loop
     }
 
-    // D_DoomLoop ();  // never returns
+    D_DoomLoop ();  // never returns RX: it will return
     return;
 }
 

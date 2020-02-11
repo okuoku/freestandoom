@@ -45,8 +45,10 @@ int  I_GetTime (void)
 
     ticks = I_GetTicks();
 
+#if 0
     if (basetime == 0)
         basetime = ticks;
+#endif
 
     ticks -= basetime;
 
@@ -64,8 +66,10 @@ int I_GetTimeMS(void)
 
     ticks = I_GetTicks();
 
+#if 0
     if (basetime == 0)
         basetime = ticks;
+#endif
 
     return ticks - basetime;
 }

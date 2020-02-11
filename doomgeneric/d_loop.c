@@ -762,6 +762,7 @@ void TryRunTics (void)
     if (counts < 1)
 	counts = 1;
 
+#if 0 // RX: ???
     // wait for new tics if needed
 
     while (!PlayersInGame() || lowtic < gametic/ticdup + counts)
@@ -783,6 +784,7 @@ void TryRunTics (void)
 
         I_Sleep(1);
     }
+#endif
 
     // run the count * ticdup dics
     while (counts--)
