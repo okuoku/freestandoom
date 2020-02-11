@@ -82,6 +82,7 @@ path_op_open(uint32_t zone, uint32_t path_loc, uint32_t mode,
         }
     }
 
+    printf("Open: [%s][%s]\n",path,req);
     fp = fopen(path, req);
 
     if(fp){
@@ -119,10 +120,10 @@ path_op_rename(uint32_t oldpath_loc, uint32_t newpath_loc, uint32_t* out_res){
     *out_res = rename(oldpath, newpath);
 
     if(oldpath){
-        free(path);
+        free(oldpath);
     }
     if(newpath){
-        free(path);
+        free(newpath);
     }
 }
 
@@ -162,14 +163,14 @@ file_op_read(uint32_t zone, uint32_t id_l, uint32_t id_h,
                 fp = stdin;
                 break;
             default:
-                fprintf("read: Invalid ch id\n");
+                fprintf(stderr, "read: Invalid ch id\n");
                 *out_res = -1;
                 return;
         }
     }else{
         fp = files_lookup(id_l, id_h);
         if(!fp){
-            fprintf("read: Invalid fileid %d,%d\n",id_l,id_h);
+            fprintf(stderr, "read: Invalid fileid %d,%d\n",id_l,id_h);
             *out_res = -1;
             return;
         }
@@ -177,7 +178,7 @@ file_op_read(uint32_t zone, uint32_t id_l, uint32_t id_h,
     }
 
     if(do_seek){
-        offset = (off_h << 32ULL) + off_l;
+        offset = ((uint64_t)off_h << 32ULL) + off_l;
         fseek(fp, offset, SEEK_SET);
     }
 
@@ -214,14 +215,14 @@ file_op_write(uint32_t zone, uint32_t id_l, uint32_t id_h,
                 fp = stderr;
                 break;
             default:
-                fprintf("read: Invalid ch id\n");
+                fprintf(stderr, "write: Invalid ch id\n");
                 *out_res = -1;
                 return;
         }
     }else{
         fp = files_lookup(id_l, id_h);
         if(!fp){
-            fprintf("read: Invalid fileid %d,%d\n",id_l,id_h);
+            fprintf(stderr, "write: Invalid fileid %d,%d\n",id_l,id_h);
             *out_res = -1;
             return;
         }
@@ -229,7 +230,7 @@ file_op_write(uint32_t zone, uint32_t id_l, uint32_t id_h,
     }
 
     if(do_seek){
-        offset = (off_h << 32ULL) + off_l;
+        offset = ((uint64_t)off_h << 32ULL) + off_l;
         fseek(fp, offset, SEEK_SET);
     }
 
@@ -239,7 +240,7 @@ file_op_write(uint32_t zone, uint32_t id_l, uint32_t id_h,
     wlen = fwrite(buf, 1, len, fp);
 
     *out_res = 0;
-    *out_len = rlen;
+    *out_len = wlen;
 
     if(buf){
         free(buf);
